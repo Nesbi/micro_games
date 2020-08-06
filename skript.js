@@ -25,11 +25,11 @@ const boxcircle = (xBox, yBox, boxWidth, boxHeight) => {
     var distY = Math.abs(ball[1] - (yBox + boxHeight / 2))
 
     if (distX > hw + ballRadius || distY > hh + ballRadius) {
-        return false
+        return false;
     }
 
     if (distX <= hw || distY <= hh) {
-        return true
+        return true;
     }
 
     var x = distX - hw
