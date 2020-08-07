@@ -70,7 +70,8 @@ setInterval(() => {
 	collide(player[0],player[1],playerWidth,playerHeight);
 	
 	//blocks
-	blocks.some(b => collide(b[0],b[1],blockWidth,blockHeight));
+	result = blocks.findIndex(b => collide(b[0],b[1],blockWidth,blockHeight));
+	if(result > -1) blocks.splice(result,1);
 
 	// Player controlls
 	player[0] += (rDown - lDown)*speed;
