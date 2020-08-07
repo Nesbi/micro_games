@@ -1,20 +1,33 @@
 
 height=200;
 width=200;
+let ballRadius;
+let ball;
+let playerHeight;
+let playerWidth;
+let player;
+let blockWidth;
+let blockHeight;
+let blocks;
 
-let ballRadius=5
-let ball = [100,150];
-let playerHeight = 10;
-let playerWidth = 80;
-let player = [100-playerWidth/2,160];
-let blockWidth = 20;
-let blockHeight = 10;
-let blocks = [
-	[10,10],[30,10],[50,10],[70,10],[90,10],[110,10],[130,10],[150,10],[170,10],
-	[10,20],[30,20],[50,20],[70,20],[90,20],[110,20],[130,20],[150,20],[170,20],
-	[10,30],[30,30],[50,30],[70,30],[90,30],[110,30],[130,30],[150,30],[170,30],
-	[10,40],[30,40],[50,40],[70,40],[90,40],[110,40],[130,40],[150,40],[170,40],
-];
+reset = () => {
+	ballRadius=5
+	ball = [100,150];
+	playerHeight = 10;
+	playerWidth = 80;
+	player = [100-playerWidth/2,160];
+	blockWidth = 20;
+	blockHeight = 10;
+	blocks = [
+		[10,10],[30,10],[50,10],[70,10],[90,10],[110,10],[130,10],[150,10],[170,10],
+		[10,20],[30,20],[50,20],[70,20],[90,20],[110,20],[130,20],[150,20],[170,20],
+		[10,30],[30,30],[50,30],[70,30],[90,30],[110,30],[130,30],[150,30],[170,30],
+		[10,40],[30,40],[50,40],[70,40],[90,40],[110,40],[130,40],[150,40],[170,40],
+
+	];
+}
+
+reset();
 
 //Control
 let pDX = 0;
@@ -28,9 +41,9 @@ document.addEventListener("keydown", event => {
 document.addEventListener("keyup", event => {
 	if(event.keyCode == 39) rDown = false; // ArrowRight
 	if(event.keyCode == 37) lDown = false; // ArrowLeft
-	console.log("up", event.keyCode);
 })
 //Physics
+let speed = 5;
 let dX = 0;
 let dY = 1;
 
@@ -42,23 +55,25 @@ const collide = (xBox, yBox, boxWidth, boxHeight) => {
 	// Collision
 	const x = ball[0]-(xBox+boxWidth/2);
 	const y = ball[1]-(yBox+boxHeight/2);
-	dX = x/Math.abs(x+y);
-	dY = y/Math.abs(x+y);
+	dX = x/(Math.abs(x)+Math.abs(y));
+	dY = y/(Math.abs(x)+Math.abs(y));
+	return true;
 }
 setInterval(() => {
-	ball[0]+=dX;
-	ball[1]+=dY;
+	ball[0]+=dX*speed;
+	ball[1]+=dY*speed;
 	//bounds
-	if(ball[0]-ballRadius<=0||ball[0]+ballRadius==width)dX*=-1;//left | right
-	if(ball[1]-ballRadius<=0||ball[1]+ballRadius==height)dY*=-1;//top | bottom
+	if(ball[0]-ballRadius<=0||ball[0]+ballRadius>=width) dX*=-1; // Left|Right
+	if(ball[1]-ballRadius<=0) dY*=-1 // Top
+	if(ball[1]+ballRadius>=height) reset() // Bottom
 	//player
 	collide(player[0],player[1],playerWidth,playerHeight);
 	
 	//blocks
-	blocks.forEach(b => collide(b[0],b[1],blockWidth,blockHeight));
+	blocks.some(b => collide(b[0],b[1],blockWidth,blockHeight));
 
 	// Player controlls
-	player[0] += rDown - lDown;
+	player[0] += (rDown - lDown)*speed;
 }, 50);
 
 // Draw
