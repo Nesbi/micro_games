@@ -1,10 +1,10 @@
-height=200;
-width=200;
+let field;
 let ball;
 let player;
 let blocks;
 
 reset = () => {
+	field = [200,200]
 	ball = [100,150,5,5,0,1]; // [x,y,radius,speed,deltaX,deltaY]
 	player = [60,160,80,10,5,false,false]; // [x,y,width,height,speed,LeftArrowDown,RightArrowDown]
 	blocks = [
@@ -30,25 +30,25 @@ document.addEventListener("keyup", event => {
 	if(event.keyCode == 39) player[6] = false; // ArrowRight
 })
 //Physics
-const collide = (xBox, yBox, boxWidth, boxHeight) => {
+const collide = (x, y, width, height) => {
 	// approx ball as rectangle
-	if(xBox>=ball[0]+ball[2] || ball[0]-ball[2]>=xBox+boxWidth) return false;
-	if(yBox>=ball[1]+ball[2] || ball[1]-ball[2]>=yBox+boxHeight) return false;
+	if(x>=ball[0]+ball[2] || ball[0]-ball[2]>=x+width) return false;
+	if(y>=ball[1]+ball[2] || ball[1]-ball[2]>=y+height) return false;
 
 	// Collision
-	const x = ball[0]-(xBox+boxWidth/2);
-	const y = ball[1]-(yBox+boxHeight/2);
-	ball[4] = x/(Math.abs(x)+Math.abs(y));
-	ball[5] = y/(Math.abs(x)+Math.abs(y));
+	const r = [ball[0]-(x+width/2), ball[1]-(y+height/2)];
+	const normalize = Math.abs(r[0])+Math.abs(r[1]);
+	ball[4] = r[0]/normalize;
+	ball[5] = r[1]/normalize;
 	return true;
 }
 setInterval(() => {
 	ball[0]+=ball[4]*ball[3];
 	ball[1]+=ball[5]*ball[3];
 	//bounds
-	if(ball[0]-ball[2]<=0||ball[0]+ball[2]>=width) ball[4]*=-1; // Left|Right
-	if(ball[1]-ball[2]<=0) ball[5]*=-1 // Top
-	if(ball[1]+ball[2]>=height) reset() // Bottom
+	if(ball[0]-ball[2] <= 0 || ball[0]+ball[2] >= field[0]) ball[4]*=-1; // Left|Right
+	if(ball[1]-ball[2] <= 0) ball[5]*=-1; // Top
+	if(ball[1]+ball[2] >= field[1]) reset(); // Bottom
 	//player
 	collide(player[0],player[1],player[2],player[3]);
 	
@@ -62,8 +62,8 @@ setInterval(() => {
 
 // Draw
 c = document.body.children[0];
-c.height=height;
-c.width=width;
+c.height=field[1];
+c.width=field[0];
 ctx = c.getContext("2d");
 setInterval(() => {
 	//clear
