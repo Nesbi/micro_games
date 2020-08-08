@@ -44,8 +44,6 @@ const selectLevel = (next) => {
 	obstacles = [levels[(next? ++levelCounter:levelCounter)%3].split('').flatMap((o,i) =>
 					 +o? [[20*(i%12),10*(~~(i/12)%4)]]:[]) // ~~ => Math.floor; Playfield 12*4
 					, 20,10]; // [[blocks],width, height]
-					console.log(obstacles)
-	
 }
 
 selectLevel();
