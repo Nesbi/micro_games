@@ -8,7 +8,7 @@ const g = (n) => { b = [120,150,5,5,0,1]; p = [95,180,50,10,5,0,0];
 	o = [l[(n? ++u:u)%3].split('').flatMap((x,i) => +x? [[20*(i%12),10*(~~(i/12)%4)]]:[]) , 20,10]; }
 g();
 
-v("keydown", e => { if(e.keyCode == 37) p[5] = 1; if(e.keyCode == 39) p[6] = 1; })
+v("keydown", e => { if(e.keyCode == 37) p[5] = 1; if(e.keyCode == 39) p[6] = 1; if(e.keyCode == 32) g(1)})
 v("keyup", e => { if(e.keyCode == 37) p[5] = 0; if(e.keyCode == 39) p[6] = 0; })
 const h = (x, y, w, h) => {
 	if(x>=b[0]+b[2] || b[0]-b[2]>=x+w) return 0; if(y>=b[1]+b[2] || b[1]-b[2]>=y+h) return 0;

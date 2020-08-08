@@ -52,6 +52,7 @@ selectLevel();
 listener("keydown", e => {
 	if(e.keyCode == 37) player[5] = true; // ArrowLeft
 	if(e.keyCode == 39) player[6] = true; // ArrowRight
+	if(e.keyCode == 32) selectLevel(true); // ArrowRight
 })
 
 listener("keyup", e => {
