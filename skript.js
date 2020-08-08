@@ -1,45 +1,54 @@
 // Helper methods
 const abs = Math.abs;
 const listener = document.addEventListener;
+const repeat = (s,n) => s.repeat(n);
 
 // Game
-let field;
+const field = [240,200];
 let ball;
 let player;
 let obstacles;
 
+let levelCounter = 0;
 const levels = [
 	// Level 1
-	"1111111111"+
-	"1111111111"+
-	"1111111111",
+	// 111111111111
+	// 111111111111
+	// 111111111111
+	// 111111111111
+	repeat("1",48),
+	
 	// Level 2
-	"1111111111"+
-	"1000110001"+
-	"1111111111",
+	// 111111111111
+	// 101101101101
+	// 101101101101
+	// 111111111111
+	repeat("1",12)+
+	repeat("101",8)+
+	repeat("1",12),
+
     // Level 3
-	"1111111111"+
-	"1011001101"+
-	"1000110001"+
-	"1101001011"
+	// 111111111111
+	// 100110011001
+	// 010010010010
+	// 111111111111
+	repeat("1",12)+
+	repeat("1001",3)+
+	repeat("010",4)+
+	repeat("1",12),
 ]
 
-const selectLevel = (level) => {
-	field = [200,200];
-	ball = [100,150,5,5,0,1]; // [x,y,radius,speed,deltaX,deltaY]
-	player = [60,160,80,10,5,false,false]; // [x,y,width,height,speed,LeftArrowDown,RightArrowDown]
-	obstacles = [
-		[
-			[10,10],[30,10],[50,10],[70,10],[90,10],[110,10],[130,10],[150,10],[170,10],
-			[10,20],[30,20],[50,20],[70,20],[90,20],[110,20],[130,20],[150,20],[170,20],
-			[10,30],[30,30],[50,30],[70,30],[90,30],[110,30],[130,30],[150,30],[170,30],
-			[10,40],[30,40],[50,40],[70,40],[90,40],[110,40],[130,40],[150,40],[170,40]
-		], 20,10,
-	]; // [[blocks],width, height]
-	levels[level].split('').map((o,i) => +o? [10*(i%10),Math.round(i/10)]:[])
+const selectLevel = (next) => {
+	ball = [120,150,5,5,0,1]; // [x,y,radius,speed,deltaX,deltaY]
+	player = [95,180,50,10,5,false,false]; // [x,y,width,height,speed,LeftArrowDown,RightArrowDown]
+	obstacles = [levels[(next? ++levelCounter:levelCounter)%3].split('').flatMap((o,i) =>
+					 +o? [[20*(i%12),10*(~~(i/12)%4)]]:[]) // ~~ => Math.floor; Playfield 12*4
+					, 20,10]; // [[blocks],width, height]
+					console.log(obstacles)
+	
 }
 
-selectLevel(0);
+selectLevel();
 
 //Control
 listener("keydown", e => {
@@ -59,24 +68,26 @@ const collide = (x, y, width, height) => {
 
 	// Collision
 	const result = [ball[0]-(x+width/2), ball[1]-(y+height/2)];
-	const normalize = abs(result[0])+abs(result[1]);
+	const normalize = Math.abs(result[0])+Math.abs(result[1]);
 	ball[4] = result[0]/normalize;
 	ball[5] = result[1]/normalize;
 	return true;
 }
 setInterval(() => {
+	if(!ball[5])return false;
 	ball[0]+=ball[4]*ball[3];
 	ball[1]+=ball[5]*ball[3];
 	//bounds
 	if(ball[0]-ball[2] <= 0 || ball[0]+ball[2] >= field[0]) ball[4]*=-1; // Left|Right
 	if(ball[1]-ball[2] <= 0) ball[5]*=-1; // Top
-	if(ball[1]+ball[2] >= field[1]) selectLevel(0); // Bottom
+	if(ball[1]+ball[2] >= field[1]) selectLevel(true); // Bottom
 	//player
 	collide(player[0],player[1],player[2],player[3]);
 	
 	//blocks
 	result = obstacles[0].findIndex(b => collide(b[0],b[1],obstacles[1],obstacles[2]));
 	if(result > -1) obstacles[0].splice(result,1);
+	if(obstacles[0].length == 0) selectLevel(true);
 
 	// Player controlls
 	player[0] += (player[6] - player[5])*player[4];
@@ -86,6 +97,7 @@ setInterval(() => {
 c = document.body.children[0];
 c.height=field[1];
 c.width=field[0];
+c.style.border = "thick solid #000"
 ctx = c.getContext("2d");
 setInterval(() => {
 	//clear
