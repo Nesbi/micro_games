@@ -78,7 +78,7 @@ setInterval(() => {
 	//bounds
 	if(ball[0]-ball[2] <= 0 || ball[0]+ball[2] >= field[0]) ball[4]*=-1; // Left|Right
 	if(ball[1]-ball[2] <= 0) ball[5]*=-1; // Top
-	if(ball[1]+ball[2] >= field[1]) selectLevel(true); // Bottom
+	if(ball[1]+ball[2] >= field[1]) selectLevel(); // Bottom -> Reset current level
 	//player
 	collide(player[0],player[1],player[2],player[3]);
 	
