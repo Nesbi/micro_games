@@ -31,31 +31,24 @@ const collide = (x, y, width, height) => {
 	ball[5] = result[1]/normalize;
 	return true;
 }
+let stop = false;
 setInterval(() => {
-	//player
-	if((nextDirection+2) % 4 != curDirection) curDirection = nextDirection; // block moving backwards
-	let head = player[0];
-	switch(curDirection) {
-		case 0: //Left
-		player.unshift([head[0]-1,head[1]])
-		break;
-		case 1: //Up
-		player.unshift([head[0],head[1]-1])
-		break;
-		case 2: //Right
-		player.unshift([head[0]+1,head[1]])
-		break;
-		case 3: //Down
-		player.unshift([head[0],head[1]+1])
-		break;
-	}
-	if(consumed > 0) {
-		consumed--;
-	} else {
-		player.pop();
+	if(!stop){
+		//player
+		if((nextDirection+2) % 4 != curDirection) curDirection = nextDirection; // block moving backwards
+		const x =  curDirection == 0 ? -1 : (curDirection==2 ? 1 : 0);
+		const y =  curDirection == 1 ? -1 : (curDirection==3 ? 1 : 0);
+		let head = [player[0][0]+x,player[0][1]+y];
+		stop = player.find(p => p[0] == head[0] && p[1] == head[1]) ? true : stop;	
+		player.unshift(head)
+
+		if(consumed > 0) {
+			consumed--;
+		} else {
+			player.pop();
+		}
 	}
 
-	curDirection = nextDirection;
 //	collide(player[0],player[1],player[2],player[3]);
 }, 500);
 
